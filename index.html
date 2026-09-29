@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Survey Musik Kita</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ffb8d1;--pink-d:#e8629a;--pink-l:#ffe6ef;--yel:#ffe693;--yel-l:#fff8d9;--ink:#5a3a4b;--mute:#98788a;--line:#f6d3e0}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:'Fredoka',system-ui,sans-serif;color:var(--ink);
+  background:linear-gradient(160deg,var(--pink-l) 0%,var(--yel-l) 100%) fixed}
+.notes{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.notes span{position:absolute;bottom:-40px;font-size:26px;opacity:.35;animation:float 14s linear infinite}
+@keyframes float{to{transform:translateY(-115vh) rotate(25deg)}}
+.wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:22px 16px 60px}
+header{text-align:center;padding:18px 0 8px}
+h1{margin:0;font-size:clamp(28px,6vw,40px);font-weight:600;letter-spacing:.2px}
+h1 em{font-style:normal;background:var(--yel);padding:0 12px;border-radius:14px;display:inline-block;transform:rotate(-2deg)}
+.sub{color:var(--mute);margin:8px 0 0}
+nav{display:flex;gap:6px;background:#fff9;padding:5px;border-radius:999px;width:fit-content;margin:18px auto;box-shadow:0 4px 14px #e8629a1f}
+nav button{border:0;background:none;font:inherit;font-weight:500;color:var(--mute);padding:9px 20px;border-radius:999px;cursor:pointer;transition:.25s}
+nav button.on{background:var(--pink);color:#fff;box-shadow:0 3px 10px #e8629a55}
+.card{background:#ffffffe8;border:2px solid var(--line);border-radius:22px;padding:18px 20px;margin-bottom:14px;box-shadow:0 6px 18px #e8629a14}
+.card h3{margin:0 0 4px;font-size:17px;font-weight:500}
+.hint{margin:0 0 10px;font-size:13px;color:var(--mute)}
+.card.err{border-color:var(--pink-d);animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.in{width:100%;font:inherit;color:var(--ink);padding:11px 14px;border:2px solid var(--line);border-radius:14px;background:#fff;margin-top:6px;transition:.2s}
+.in:focus{outline:none;border-color:var(--pink);box-shadow:0 0 0 4px #ffb8d155}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip input{position:absolute;opacity:0}
+.chip span{display:inline-block;padding:8px 14px;border-radius:999px;border:2px solid var(--line);background:#fff;cursor:pointer;font-size:14.5px;transition:.2s}
+.chip span:hover{transform:translateY(-2px);border-color:var(--pink)}
+.chip input:checked+span{background:var(--pink);border-color:var(--pink);color:#fff;transform:scale(1.05)}
+.chip input:focus-visible+span{outline:3px solid var(--yel);outline-offset:2px}
+.btn{font:inherit;font-weight:600;border:0;cursor:pointer;color:#fff;background:var(--pink-d);padding:13px 28px;border-radius:999px;
+  box-shadow:0 6px 16px #e8629a55;transition:.2s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn.alt{background:var(--yel);color:var(--ink);box-shadow:0 6px 16px #e8c33a55}
+.center{text-align:center}
+.msg{margin:10px 0 0;color:var(--pink-d);font-weight:500;min-height:22px}
+.hide{display:none}
+.thanks{text-align:center;padding:36px 20px}
+.thanks .big{font-size:56px;animation:pop .6s}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.stat{background:#fffffff0;border:2px solid var(--line);border-radius:20px;padding:14px;text-align:center}
+.stat:nth-child(even){background:var(--yel-l);border-color:#f7e6a3}
+.stat .e{font-size:24px}
+.stat .v{font-size:19px;font-weight:600;margin:2px 0;word-break:break-word}
+.stat .l{font-size:12.5px;color:var(--mute)}
+.bar{display:grid;grid-template-columns:minmax(90px,38%) 1fr 32px;gap:10px;align-items:center;margin:9px 0;font-size:14px}
+.track{background:var(--pink-l);border-radius:99px;height:14px;overflow:hidden}
+.track i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--pink),var(--yel));animation:grow 1s .1s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes grow{to{width:var(--w)}}
+.bar b{text-align:right;color:var(--pink-d)}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+td,th{padding:8px 6px;border-bottom:1px dashed var(--line);text-align:left}
+th{color:var(--mute);font-weight:500}
+td:last-child,th:last-child{text-align:right}
+.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.top small{color:var(--mute)}
+.load{text-align:center;padding:40px;color:var(--mute)}
+.load .d{display:inline-block;animation:bounce 1s infinite}
+@keyframes bounce{50%{transform:translateY(-10px)}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition:none!important}.notes{display:none}}
+</style>
+</head>
+<body>
+<div class="notes" aria-hidden="true"></div>
+<div class="wrap">
+  <header>
+    <h1>Survey <em>Musik</em> Kita 🎧</h1>
+    <p class="sub">Cerita soal playlist-mu, cuma 2 menit!</p>
+  </header>
+  <nav>
+    <button id="tabForm" class="on" onclick="go('form')">🎤 Isi Survey</button>
+    <button id="tabRes" onclick="go('res')">📊 Lihat Hasil</button>
+  </nav>
+
+  <!-- HALAMAN FORM -->
+  <main id="vForm">
+    <div id="qs"></div>
+    <div class="center">
+      <button class="btn" id="send" onclick="kirim()">Kirim jawaban 🎶</button>
+      <p class="msg" id="msg" role="alert"></p>
+    </div>
+  </main>
+
+  <!-- HALAMAN TERIMA KASIH -->
+  <main id="vThanks" class="hide">
+    <div class="card thanks">
+      <div class="big">🎉</div>
+      <h2>Terima kasih!</h2>
+      <p class="sub">Jawabanmu sudah tersimpan.</p>
+      <p><button class="btn" onclick="go('res')">Lihat hasil survey</button>
+      <button class="btn alt" onclick="ulang()">Isi lagi</button></p>
+    </div>
+  </main>
+
+  <!-- HALAMAN HASIL -->
+  <main id="vRes" class="hide">
+    <div class="top"><small id="upd"></small><button class="btn alt" onclick="muat()">🔄 Muat ulang</button></div>
+    <div id="out"></div>
+  </main>
+</div>
+
+<script>
+/* ===== Daftar pertanyaan (ubah teks/pilihan di sini) ===== */
+var RATE = {o:['1','2','3','4','5'], em:['😕','🙂','😊','😄','🤩']};
+var Q = [
+ {k:'nama', t:'Nama panggilanmu (boleh dikosongkan)', type:'text', ph:'mis. Sasa', opt:1},
+ {k:'usia', t:'Usiamu berapa?', type:'select', o:['Di bawah 13','13 - 15','16 - 18','19 - 25','Di atas 25']},
+ {k:'genre', t:'Genre musik favoritmu? 🎸', h:'Pilih maksimal 3', type:'check', max:3,
+  o:['Pop','K-Pop','Hip-Hop/Rap','R&B','Rock','Indie','Dangdut','EDM','Jazz','Lo-fi','Anime/OST','Religi','Lainnya']},
+ {k:'artis', t:'Siapa artis yang paling sering kamu dengar? 🎤', h:'Maksimal 3, pisahkan dengan koma', type:'text', ph:'mis. NIKI, Tulus, BTS'},
+ {k:'platform', t:'Kamu dengar musik lewat apa? 📱', h:'Boleh pilih lebih dari satu', type:'check',
+  o:['Spotify','YouTube Music','YouTube','Joox','Apple Music','TikTok','SoundCloud','Radio','Lainnya']},
+ {k:'frekuensi', t:'Seberapa sering kamu mendengarkan musik?', type:'radio',
+  o:['Setiap hari','4 - 6 kali seminggu','2 - 3 kali seminggu','Seminggu sekali','Jarang']},
+ {k:'durasi', t:'Berapa lama kamu mendengarkan musik dalam sehari? ⏱️', type:'radio',
+  o:['Kurang dari 30 menit','30 menit - 1 jam','1 - 2 jam','2 - 4 jam','Lebih dari 4 jam']},
+ {k:'waktu', t:'Kapan waktu favoritmu mendengarkan musik? 🌙', h:'Boleh pilih lebih dari satu', type:'check',
+  o:['Pagi','Siang','Sore','Malam','Menjelang tidur']},
+ {k:'aktivitas', t:'Sambil dengar musik, biasanya kamu ngapain?', h:'Boleh pilih lebih dari satu', type:'check',
+  o:['Belajar','Mengerjakan tugas','Dalam perjalanan','Olahraga','Bersantai','Main game','Beres-beres','Nongkrong','Menjelang tidur']},
+ {k:'kepuasan', t:'Seberapa puas kamu dengan platform musik utamamu? (1 = kurang, 5 = sangat puas)', type:'radio', o:RATE.o, em:RATE.em},
+ {k:'penting', t:'Seberapa penting musik dalam hidupmu? (1 = biasa, 5 = sangat penting)', type:'radio', o:RATE.o, em:RATE.em}
+];
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+/* ===== Hiasan not musik melayang ===== */
+(function(){
+  var h = '', s = ['🎵','🎶','♪','🎧','⭐'];
+  for (var i = 0; i < 9; i++) h += '<span style="left:' + (i*11+3) + '%;animation-delay:-' + (i*1.7) + 's;animation-duration:' + (12+i%4*3) + 's">' + s[i%5] + '</span>';
+  document.querySelector('.notes').innerHTML = h;
+})();
+
+/* ===== Menampilkan form ===== */
+function field(q){
+  if (q.type === 'text') return '<input class="in" name="'+q.k+'" maxlength="120" autocomplete="off" placeholder="'+(q.ph||'')+'">';
+  if (q.type === 'select') return '<select class="in" name="'+q.k+'"><option value="">Pilih...</option>'+q.o.map(function(o){return '<option>'+o+'</option>';}).join('')+'</select>';
+  var t = q.type === 'check' ? 'checkbox' : 'radio';
+  return '<div class="chips">'+q.o.map(function(o,j){
+    return '<label class="chip"><input type="'+t+'" name="'+q.k+'" value="'+o+'"><span>'+(q.em?q.em[j]+' ':'')+o+'</span></label>';
+  }).join('')+'</div>';
+}
+function render(){
+  $('qs').innerHTML = Q.map(function(q,i){
+    return '<section class="card" id="q_'+q.k+'"><h3>'+(i+1)+'. '+q.t+'</h3>'+(q.h?'<p class="hint">'+q.h+'</p>':'')+field(q)+'</section>';
+  }).join('');
+  Q.filter(function(q){return q.max;}).forEach(function(q){
+    document.querySelectorAll('[name="'+q.k+'"]').forEach(function(el){
+      el.addEventListener('change', function(){
+        if (document.querySelectorAll('[name="'+q.k+'"]:checked').length > q.max){
+          el.checked = false; $('msg').textContent = 'Maksimal ' + q.max + ' pilihan ya 😊';
+        }
+      });
+    });
+  });
+}
+
+/* ===== Navigasi halaman ===== */
+function go(v){
+  ['Form','Thanks','Res'].forEach(function(n){ $('v'+n).classList.add('hide'); });
+  $(v === 'form' ? 'vForm' : v === 'res' ? 'vRes' : 'vThanks').classList.remove('hide');
+  $('tabForm').classList.toggle('on', v !== 'res');
+  $('tabRes').classList.toggle('on', v === 'res');
+  window.scrollTo({top:0, behavior:'smooth'});
+  if (v === 'res') muat();
+}
+function ulang(){ render(); $('msg').textContent = ''; go('form'); }
+
+/* ===== Mengumpulkan & mengirim jawaban ===== */
+function ambil(){
+  var d = {};
+  Q.forEach(function(q){
+    var els = Array.prototype.slice.call(document.querySelectorAll('[name="'+q.k+'"]'));
+    if (q.type === 'check') d[q.k] = els.filter(function(e){return e.checked;}).map(function(e){return e.value;});
+    else if (q.type === 'radio'){ var c = els.filter(function(e){return e.checked;})[0]; d[q.k] = c ? c.value : ''; }
+    else d[q.k] = els[0].value.trim();
+  });
+  return d;
+}
+function kirim(){
+  var d = ambil(), msg = $('msg');
+  document.querySelectorAll('.card.err').forEach(function(c){ c.classList.remove('err'); });
+  for (var i = 0; i < Q.length; i++){
+    var q = Q[i], v = d[q.k];
+    if (!q.opt && (!v || v.length === 0)){
+      var box = $('q_'+q.k); box.classList.add('err');
+      box.scrollIntoView({behavior:'smooth', block:'center'});
+      msg.textContent = 'Pertanyaan no. ' + (i+1) + ' belum diisi 🙏';
+      return;
+    }
+  }
+  msg.textContent = ''; $('send').disabled = true; $('send').textContent = 'Menyimpan...';
+  google.script.run
+    .withSuccessHandler(function(){ $('send').disabled = false; $('send').textContent = 'Kirim jawaban 🎶'; go('thanks'); })
+    .withFailureHandler(function(e){ $('send').disabled = false; $('send').textContent = 'Kirim jawaban 🎶'; msg.textContent = 'Gagal menyimpan: ' + e.message; })
+    .submitSurvey(d);
+}
+
+/* ===== Halaman hasil ===== */
+function muat(){
+  $('out').innerHTML = '<div class="load"><span class="d">🎵</span> <span class="d" style="animation-delay:.15s">🎶</span> <span class="d" style="animation-delay:.3s">🎵</span><p>Mengambil data terbaru...</p></div>';
+  google.script.run
+    .withSuccessHandler(tampil)
+    .withFailureHandler(function(e){ $('out').innerHTML = '<div class="card">Gagal memuat data: ' + esc(e.message) + '</div>'; })
+    .getStats();
+}
+function jam(m){
+  var h = Math.floor(m/60), mm = Math.round(m%60);
+  return ((h ? h + ' jam ' : '') + (mm ? mm + ' menit' : '')).trim() || '0 menit';
+}
+function bars(list, total){
+  return list.slice(0,8).map(function(x){
+    var p = Math.round(x.count/total*100);
+    return '<div class="bar"><span>'+esc(x.name)+'</span><div class="track" title="'+p+'%"><i style="--w:'+p+'%"></i></div><b>'+x.count+'</b></div>';
+  }).join('');
+}
+function chart(title, list, total){ return '<section class="card"><h3>'+title+'</h3>'+bars(list,total)+'</section>'; }
+function tampil(s){
+  if (!s.total){
+    $('out').innerHTML = '<div class="card thanks"><div class="big">🎤</div><h3>Belum ada responden</h3><p class="sub">Jadilah yang pertama mengisi survey!</p><button class="btn" onclick="go(\'form\')">Isi survey</button></div>';
+    return;
+  }
+  $('upd').textContent = 'Diperbarui: ' + s.updated;
+  var t = s.total;
+  var cards = [
+    ['👥', t, 'Responden'],
+    ['🎸', s.genre[0].name, 'Genre terpopuler'],
+    ['📱', s.platform[0].name, 'Platform terbanyak'],
+    ['🎤', s.artis[0].name, 'Artis paling dipilih'],
+    ['⏱️', jam(s.avgMenit), 'Rata-rata durasi per hari'],
+    ['🌙', s.waktu[0].name, 'Waktu favorit'],
+    ['🎯', s.aktivitas[0].name, 'Aktivitas teratas'],
+    ['⭐', s.avgKepuasan.toFixed(1) + ' / 5', 'Kepuasan platform'],
+    ['💖', s.avgPenting.toFixed(1) + ' / 5', 'Pentingnya musik']
+  ].map(function(c){ return '<div class="stat"><div class="e">'+c[0]+'</div><div class="v">'+esc(c[1])+'</div><div class="l">'+c[2]+'</div></div>'; }).join('');
+
+  var art = '<section class="card"><h3>🏆 Artis paling banyak dipilih</h3><table><tr><th>#</th><th>Artis</th><th>Suara</th></tr>' +
+    s.artis.slice(0,10).map(function(a,i){ return '<tr><td>'+(i+1)+'</td><td>'+esc(a.name)+'</td><td>'+a.count+'</td></tr>'; }).join('') + '</table></section>';
+
+  $('out').innerHTML = '<div class="stats">'+cards+'</div>' + art +
+    chart('🎸 Genre favorit', s.genre, t) + chart('📱 Platform musik', s.platform, t) +
+    chart('🌙 Waktu mendengarkan', s.waktu, t) + chart('🎯 Aktivitas sambil mendengarkan', s.aktivitas, t) +
+    chart('🔁 Frekuensi mendengarkan', s.frekuensi, t) + chart('⏱️ Durasi per hari', s.durasi, t) +
+    chart('🎂 Kelompok usia responden', s.usia, t);
+}
+
+render();
+</script>
+</body>
+</html>
